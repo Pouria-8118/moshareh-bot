@@ -12,7 +12,7 @@ The system comprises three principal subsystems:
 
 ### 1. Data Engineering Pipeline
 
-The raw Ganjoor SQLite database (~140 MB, normalized relational schema) is transformed into a denormalized, query-optimized datastore (~700 MB) through an ETL process that:
+The raw Ganjoor SQLite database  is transformed into a denormalized, query-optimized datastore (~700 MB) through an ETL process that:
 
 - Joins four relational tables (`poet`, `cat`, `poem`, `verse`) into a flat couplet representation
 - Resolves hierarchical category trees via recursive parent traversal to extract poet attribution
@@ -77,7 +77,7 @@ The maximum score across all metrics is compared against a configurable acceptan
 
 The poetry corpus is derived from the [Ganjoor](https://github.com/ganjoor) open-source digital library of Persian literature. This project would not be feasible without the sustained efforts of the Ganjoor team and its community of contributors in digitizing and structuring classical Persian poetry.
 
-Persian linguistic processing is powered by [Hazm](https://github.com/sobhe/hazm), developed by Sobhe. Fuzzy string matching is provided by [RapidFuzz](https://github.com/maxbachmann/RapidFuzz), a high-performance Python library with C++ backend.
+Persian linguistic processing is powered by [Hazm](https://github.com/sobhe/hazm). Fuzzy string matching is provided by [RapidFuzz](https://github.com/maxbachmann/RapidFuzz), a high-performance Python library with C++ backend.
 
 ## License
 
@@ -88,6 +88,3 @@ This project is released for **educational and research purposes only**. See [LI
 
 If you use concepts from this project in academic or personal work, please cite this repository as a reference.
 
----
-
-Built for the preservation and interactive engagement with Persian poetic heritage.

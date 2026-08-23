@@ -1,4 +1,10 @@
-# Environment
+# Build script
+build_couplets.py
+
+# Raw CSV data files (Too large for GitHub)
+*.csv
+
+# Environment variables
 .env
 .env.local
 .env.*.local
@@ -28,10 +34,12 @@ build/
 .idea/
 *.swp
 *.swo
+.project
 
 # OS
 .DS_Store
 Thumbs.db
+Desktop.ini
 
 # Logs
 *.log

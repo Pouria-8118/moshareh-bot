@@ -1282,10 +1282,10 @@ async def process_pvp_move(
 def main():
     token = BOT_TOKEN.strip()
 
-    if not token or token == "PASTE_YOUR_BOT_TOKEN_HERE":
+    if not token:
         raise SystemExit(
             "Bot token is not set.\n"
-            "Set the BOT_TOKEN environment variable or paste it directly in the code."
+            "Set the BOT_TOKEN environment variable"
         )
 
     init_db()

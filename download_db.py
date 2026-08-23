@@ -5,7 +5,7 @@ import sys
 
 DB_URL = os.getenv(
     "DB_URL",
-    "https://github.com/YOUR_USERNAME/moshareh-bot/releases/download/v1.0/bot_couplets.s3db"
+    "https://github.com/Pouria-8118/moshareh-bot/releases/download/v1.0/bot_couplets.s3db"
 )
 
 DB_PATH = "bot_couplets.s3db"

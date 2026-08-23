@@ -28,7 +28,22 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+*.s3db-shm
+*.s3db-wal
+*.db-shm
+*.db-wal
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3-shm
+*.sqlite3-wal
+
+#Binaries
 *.DLL
+*.dll
+*.exe
+*.so
+*.dylib
+
 
 # IDE
 .vscode/

@@ -28,6 +28,7 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+*.DLL
 
 # IDE
 .vscode/

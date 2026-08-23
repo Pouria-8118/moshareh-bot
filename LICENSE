@@ -1,0 +1,65 @@
+EDUCATIONAL USE LICENSE
+Version 1.0, August 2026
+
+Copyright (c) 2026 [Your Name]
+
+TERMS AND CONDITIONS
+
+1. GRANT OF RIGHTS
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to view,
+read, and study the Software solely for educational, academic, and personal
+learning purposes, subject to the following conditions.
+
+2. PERMITTED USES
+
+   a. Reading and studying the source code for educational purposes.
+   b. Drawing inspiration from the architecture, algorithms, and design
+      patterns for use in original, independently developed projects.
+   c. Quoting portions of the code in academic papers, theses, or educational
+      materials, provided that proper attribution is given to this repository.
+   d. Modifying the code for personal experimentation and learning, provided
+      such modifications are not redistributed.
+
+3. PROHIBITED USES
+
+   a. Commercial use of the Software or any derivative works, including but
+      not limited to operating a competing service, selling access, or
+      incorporating the Software into a commercial product.
+   b. Verbatim redistribution of the Software in whole or in substantial part,
+      in any medium, without prior written permission from the copyright holder.
+   c. Deployment of a functionally identical clone of the Software as a public
+      service intended to impersonate, compete with, or substitute the original.
+   d. Removal or alteration of any copyright notices, attribution, or license
+      terms contained within the Software.
+
+4. ATTRIBUTION
+
+Any academic or educational use that references concepts, algorithms, or design
+decisions from this Software must include a citation to the original repository:
+
+   [Your Name]. "Persian Poetry Battle Bot (Moshareh)." GitHub, 2026.
+   https://github.com/[YOUR_USERNAME]/moshareh-bot
+
+5. DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+6. POETRY DATA
+
+The poetry corpus used by this Software is sourced from the Ganjoor project
+(https://ganjoor.net), which is independently licensed. Users of this Software
+are responsible for complying with the terms of the Ganjoor data license
+separately from this Software license.
+
+---
+
+For permissions beyond the scope of this license, please contact the author
+via GitHub Issues.

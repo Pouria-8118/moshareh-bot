@@ -185,15 +185,49 @@ def init_db():
         raise SystemExit(
             "Table 'couplets' not found. Please run build_couplets.py first."
         )
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS user_records (
-            user_id INTEGER PRIMARY KEY,
-            username TEXT,
-            full_name TEXT,
-            best_score INTEGER DEFAULT 0,
-            updated_at TEXT
-        )
-    """)
+    
+    # Check if user_records needs migration
+    cursor = conn.execute("PRAGMA table_info(user_records)")
+    columns_info = cursor.fetchall()
+    if columns_info:
+        columns = {row[1] for row in columns_info}
+        if "chat_id" not in columns:
+            logger.info("Migrating user_records table to per-group structure...")
+            conn.execute("ALTER TABLE user_records RENAME TO user_records_old")
+            conn.execute("""
+                CREATE TABLE user_records (
+                    chat_id INTEGER,
+                    user_id INTEGER,
+                    username TEXT,
+                    full_name TEXT,
+                    best_score INTEGER DEFAULT 0,
+                    updated_at TEXT,
+                    PRIMARY KEY (chat_id, user_id)
+                )
+            """)
+            try:
+                conn.execute("""
+                    INSERT OR IGNORE INTO user_records (chat_id, user_id, username, full_name, best_score, updated_at)
+                    SELECT user_id, user_id, username, full_name, best_score, updated_at FROM user_records_old
+                """)
+            except Exception as e:
+                logger.warning(f"Migration error (non-critical): {e}")
+            conn.execute("DROP TABLE IF EXISTS user_records_old")
+            conn.commit()
+            logger.info("Migration complete.")
+    else:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS user_records (
+                chat_id INTEGER,
+                user_id INTEGER,
+                username TEXT,
+                full_name TEXT,
+                best_score INTEGER DEFAULT 0,
+                updated_at TEXT,
+                PRIMARY KEY (chat_id, user_id)
+            )
+        """)
+    
     conn.execute("""
         CREATE TABLE IF NOT EXISTS pvp_wins (
             chat_id INTEGER,
@@ -331,32 +365,32 @@ def validate_user_couplet(text: str, required_letter=None):
 
 
 # -----------------------------
-# Records
+# Records (Per-Group)
 # -----------------------------
 
-def update_best(user_id: int, username: str, full_name: str, score: int) -> int:
+def update_best(chat_id: int, user_id: int, username: str, full_name: str, score: int) -> int:
     now = datetime.now(timezone.utc).isoformat()
     conn.execute("""
-        INSERT INTO user_records (user_id, username, full_name, best_score, updated_at)
-        VALUES (?, ?, ?, ?, ?)
-        ON CONFLICT(user_id) DO UPDATE SET
+        INSERT INTO user_records (chat_id, user_id, username, full_name, best_score, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(chat_id, user_id) DO UPDATE SET
             username = excluded.username,
             full_name = excluded.full_name,
             best_score = max(best_score, excluded.best_score),
             updated_at = excluded.updated_at
-    """, (user_id, username or "", full_name or "", score, now))
+    """, (chat_id, user_id, username or "", full_name or "", score, now))
     conn.commit()
     row = conn.execute(
-        "SELECT best_score FROM user_records WHERE user_id = ?",
-        (user_id,)
+        "SELECT best_score FROM user_records WHERE chat_id = ? AND user_id = ?",
+        (chat_id, user_id)
     ).fetchone()
     return row[0] if row else score
 
 
-def get_best(user_id: int) -> int:
+def get_best(chat_id: int, user_id: int) -> int:
     row = conn.execute(
-        "SELECT best_score FROM user_records WHERE user_id = ?",
-        (user_id,)
+        "SELECT best_score FROM user_records WHERE chat_id = ? AND user_id = ?",
+        (chat_id, user_id)
     ).fetchone()
     return row[0] if row else 0
 
@@ -375,10 +409,10 @@ def increment_pvp_win(chat_id: int, user_id: int, username: str, full_name: str)
     conn.commit()
 
 
-def get_top_records(limit: int = 10):
+def get_top_records(chat_id: int, limit: int = 10):
     rows = conn.execute(
-        "SELECT full_name, username, best_score FROM user_records ORDER BY best_score DESC LIMIT ?",
-        (limit,)
+        "SELECT full_name, username, best_score FROM user_records WHERE chat_id = ? ORDER BY best_score DESC LIMIT ?",
+        (chat_id, limit)
     ).fetchall()
     return rows
 
@@ -536,7 +570,8 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def record_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    best = get_best(user.id)
+    chat = update.effective_chat
+    best = get_best(chat.id, user.id)
     await update.message.reply_text(
         f"🥇 بیشترین رکورد ثبت‌شده برای {html.escape(safe_name(user))}: <b>{best}</b>",
         parse_mode="HTML"
@@ -554,7 +589,7 @@ async def top_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     title = html.escape(chat.title or "گروه")
-    rows = get_top_records(10)
+    rows = get_top_records(chat.id, 10)
 
     lines = [f"🏆 <b>بیشترین امتیازات گروه «{title}»</b>\n"]
     medals = ["🥇", "🥈", "🥉"]
@@ -703,6 +738,7 @@ async def stop_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cancel_jobs(context, solo_job_name(chat_id, user.id))
 
         best = update_best(
+            chat_id,
             user.id,
             user.username or "",
             safe_name(user),
@@ -802,9 +838,8 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         solo = solo_games.pop(key, None)
         if solo:
             cancel_jobs(context, solo_job_name(chat_id, user.id))
-            best = update_best(user.id, user.username or "", safe_name(user), solo["score"])
+            best = update_best(chat_id, user.id, user.username or "", safe_name(user), solo["score"])
             
-            # ارسال پیام جدید
             await context.bot.send_message(
                 chat_id=chat_id,
                 text=(
@@ -815,7 +850,6 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 parse_mode="HTML",
                 reply_markup=get_restart_keyboard("solo")
             )
-            # حذف پیام قبلی برای تمیز ماندن چت
             try:
                 await query.message.delete()
             except Exception:
@@ -884,7 +918,7 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data == "top_records":
         chat = query.message.chat
         title = html.escape(chat.title or "گروه")
-        rows = get_top_records(10)
+        rows = get_top_records(chat.id, 10)
 
         lines = [f"🏆 <b>بیشترین امتیازات گروه «{title}»</b>\n"]
         medals = ["🥇", "🥈", "🥉"]
@@ -1003,6 +1037,7 @@ async def solo_timeout(context: ContextTypes.DEFAULT_TYPE):
         return
 
     best = update_best(
+        chat_id,
         user_id,
         state.get("username", ""),
         state.get("full_name", ""),
@@ -1172,6 +1207,7 @@ async def process_solo_move(
         solo_games.pop(key, None)
 
         best = update_best(
+            chat_id,
             user.id,
             solo.get("username", ""),
             solo.get("full_name", ""),

@@ -4,8 +4,15 @@ from hazm import Normalizer
 from rapidfuzz import fuzz
 
 
-# Initialize once during Worker startup/snapshot.
-normalizer = Normalizer()
+# Cloudflare Worker memory is limited to 128 MB.
+# Hazm's default Normalizer loads large word/verb dictionaries.
+# Disable the dictionary-backed features that this bot does not need
+# because the bot has its own normalization pipeline afterwards.
+normalizer = Normalizer(
+    correct_spacing=False,
+    decrease_repeated_chars=False,
+    seperate_mi=False,
+)
 
 
 class Default(WorkerEntrypoint):

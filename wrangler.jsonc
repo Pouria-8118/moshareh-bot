@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+
+  "name": "moshareh-bot",
+  "main": "src/entry.py",
+
+  "compatibility_date": "2026-10-02",
+
+  "compatibility_flags": [
+    "python_workers"
+  ],
+
+  "d1_databases": [
+    {
+      "binding": "CORPUS_1",
+      "database_name": "moshareh-corpus-1",
+      "database_id": "e46a4270-8001-4dcc-88e8-613641965876"
+    },
+    {
+      "binding": "CORPUS_2",
+      "database_name": "moshareh-corpus-2",
+      "database_id": "da287201-e967-4396-8b9c-549ce972a6e6"
+    },
+    {
+      "binding": "CORPUS_3",
+      "database_name": "moshareh-corpus-3",
+      "database_id": "d00b81f0-bb44-47a6-a2a7-1ec1dd83fa18"
+    },
+    {
+      "binding": "CORPUS_4",
+      "database_name": "moshareh-corpus-4",
+      "database_id": "f73ab633-d9ad-4f4b-871c-799f74406757"
+    },
+    {
+      "binding": "STATE_DB",
+      "database_name": "moshareh-state",
+      "database_id": "9317980a-00a8-4f08-a051-bbb2cf10217d"
+    }
+  ]
+}

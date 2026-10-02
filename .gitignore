@@ -4,11 +4,12 @@ build_couplets.py
 # Raw CSV data files (Too large for GitHub)
 *.csv
 
+
 # Environment variables
 .env
 .env.local
 .env.*.local
-
+.venv-workers
 # Python
 __pycache__/
 *.py[cod]

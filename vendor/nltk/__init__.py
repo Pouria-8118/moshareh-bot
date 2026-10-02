@@ -1,0 +1,1 @@
+# Minimal NLTK compatibility layer for Hazm.

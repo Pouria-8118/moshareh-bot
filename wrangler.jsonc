@@ -5,7 +5,12 @@
   "main": "src/entry.py",
 
   "compatibility_date": "2026-10-02",
-
+  "python_modules": {
+  "exclude": [
+    "**/*.pyc",
+    "**/__pycache__"
+  ]
+  },
   "compatibility_flags": [
     "python_workers"
   ],

@@ -2,6 +2,7 @@
 name = "moshareh-bot"
 version = "2.0.0"
 description = "Persian Poetry Battle Telegram Bot"
+readme = "README.md"
 requires-python = ">=3.13"
 
 dependencies = [
